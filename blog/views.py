@@ -1,14 +1,33 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView  # new
+from django.urls import reverse_lazy  # new
+
 from .models import Post
 
 
-# Create your views here.
-def home_page(request):
-    context = {"all_posts": Post.objects.all()}
-    return render(request, "blog/home.html", context)
+class BlogListView(ListView):
+    model = Post
+    template_name = "blog/home.html"
 
 
-def single_post(request, pk):
-    post = Post.objects.get(id=pk)
-    return render(request, "blog/single_post.html", {"post": post})
+class BlogDetailView(DetailView):
+    model = Post
+    template_name = "blog/post_detail.html"
+
+
+class BlogCreateView(CreateView):
+    model = Post
+    template_name = "blog/post_new.html"
+    fields = ["title", "author", "body"]
+
+
+class BlogUpdateView(UpdateView):
+    model = Post
+    template_name = "blog/post_edit.html"
+    fields = ["title", "body"]
+
+
+class BlogDeleteView(DeleteView):  # new
+    model = Post
+    template_name = "blog/post_delete.html"
+    success_url = reverse_lazy("home")
